@@ -1,3 +1,7 @@
+#!bin/usr/python
+
+# Do dzialania wymagana zainstalowana biblioteka numpy
+
 import math
 import numpy as np
 
