@@ -20,6 +20,11 @@ y4 = np.linalg.solve(A, x4)
 W1 = np.linalg.norm(y1-y2) / np.linalg.norm(x1-x2)
 W2 = np.linalg.norm(y3-y4) / np.linalg.norm(x3-x4)
 
+print('y1:', y1)
+print('y2:', y2)
+print('y3:', y3)
+print('y4:', y4)
+
 print('w1:', W1)
 print('w2:', W2)
 print('różnica:', W1 - W2)
