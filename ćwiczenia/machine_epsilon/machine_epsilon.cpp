@@ -1,18 +1,28 @@
 #include <iostream>
 
-float machine_epsilon() {
+float float_machine_epsilon(float n) {
     float eps;
-    float tmp = 1.0;
-    while (tmp) {
-        eps = tmp;
-        tmp = tmp / 2;
+    while (n) {
+        eps = n;
+        n = n / 2;
     }
     return eps;
 }
 
+double double_machine_epsilon(double n) {
+    double eps;
+    while (n) {
+        eps = n;
+        n = n / 2;
+    }
+    return eps;
+}
+
+
 int main() {
 
-    std::cout << machine_epsilon() << std::endl;
+    std::cout << "float: " << float_machine_epsilon(1) << std::endl;
+    std::cout << "double " << double_machine_epsilon(1) << std::endl;
 
     return 0;
 }
