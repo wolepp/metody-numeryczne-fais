@@ -1,8 +1,8 @@
 #include <iostream>
 
 float machine_epsilon() {
-    float eps = 0.0;
-    float tmp = 0.0;
+    float eps;
+    float tmp = 1.0;
     while (tmp) {
         eps = tmp;
         tmp = tmp / 2;
@@ -12,4 +12,7 @@ float machine_epsilon() {
 
 int main() {
 
+    std::cout << machine_epsilon() << std::endl;
+
+    return 0;
 }
