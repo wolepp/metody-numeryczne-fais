@@ -1,7 +1,7 @@
 *.pdf
 zips/
 playground/
-.data
+*.data
 
 .vscode/
 __pycache__/

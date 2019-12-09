@@ -6,7 +6,7 @@
 
 const int N = 100;
 const int ITERATION_LIMIT = 10000;
-const double PRECISION = 10e-8;
+const double PRECISION = 10e-12;
 
 const char * FILENAME_JACOBI = "jacobi.data";
 const char * FILENAME_GAUSS_SEIDEL = "gauss-seidel.data";
@@ -32,6 +32,10 @@ bool is_converged(array<double, N> a, array<double, N> b, double precision) {
 }
 
 int main() {
+
+    /* TODO:
+    * zapisywać do pliku z większą precyzją! sprintf?
+    */
 
     // Jacobi
     array<double, N> x = {0};
