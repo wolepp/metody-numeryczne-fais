@@ -1,6 +1,10 @@
 *.pdf
 zips/
 playground/
+.data
+
+.vscode/
+__pycache__/
 
 # Prerequisites
 *.d
