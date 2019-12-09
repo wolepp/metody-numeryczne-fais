@@ -2,8 +2,7 @@ CXX 	  	:= g++
 CXXFLAGS	:= -pedantic-errors -Wall -Wextra -Werror
 SRC			:= $(wildcard *.cpp)
 OBJECTS		:= $(SRC:%.cpp=%.o)
-# Zmień nazwę Targeta
-TARGET 		:= PROGRAM-NAME.out
+TARGET 		:= num6.out
 
 all: $(TARGET)
 
