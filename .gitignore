@@ -2,6 +2,7 @@
 zips/
 playground/
 *.data
+*.csv
 
 .vscode/
 __pycache__/
