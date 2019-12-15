@@ -1,0 +1,93 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{graphicx}
+\usepackage[]{latexsym}
+\usepackage[]{amsmath}
+\usepackage[]{mathtools}
+\usepackage[]{bm}
+\usepackage[MeX]{polski}
+\usepackage[utf8]{inputenc}
+
+\author{Wojciech Lepich \and Nomen Nescio}
+\title{NUM5. Metody iteracyjne Jacobiego i \nolinebreak{Gaussa-Seidela}}
+
+\begin{document}
+\maketitle
+\section{Teoria}
+Metody iteracyjne służą do znalezienia rozwiązania układu równań z pewnym przybliżeniem.
+Teoretycznie w granicy nieskończenie wielu kroków otrzymujemy dokładne rozwiązanie.
+Dwie z metod to metoda Jacobiego i metoda Gaussa-Seidela.
+
+\subsection{Metoda Jacobiego}
+Rozwiązaniem układu \(Ax = B\) z daną macierzą \(A\) i wektorem \(b\) jest:
+\[ x_{i}^{(k+1)} = \frac{1}{a_{ii}}(b_{i} - \sum_{j=1}^{i-1}a_{ij}x_{j}^{(k)} 
+- \sum_{j=i+1}^{N}a_{ij}x_{j}^{(k)}) \]
+Metoda Jacobiego jest zbieżna, jeśli macierz A jest silnie diagonalnie dominująca.
+
+\subsection{Metoda Gaussa-Seidela}
+Rozwiązaniem układu \(Ax = B\) z daną macierzą \(A\) i wektorem \(b\) jest:
+\[ x_{i}^{(k+1)} = \frac{1}{a_{ii}}(b_{i}-\sum_{j=1}^{i-1}a_{ij}x_{j}^{(k+1)} - 
+\sum_{j=i+1}^{N}a_{ij}x_{j}^{(k)}) \]
+W tej metodzie obliczając \(x_{i}^{(k+1)}\)-ty element korzystamy z najnowszych przybliżeń 
+\(x_{j}^{(k+1)}\) dla \(j<i\). W omówieniu widać korzyści płynące z tego ulepszenia. Wadą 
+rozwiązania jest niemożność zrównoleglenia obliczeń.
+
+\section{Omówienie}
+Zadany jest układ równań
+\[
+    \left(
+        \begin{matrix}
+            3 & 1 & 0.2 & & & & & \\
+            1 & 3 & 1 & 0.2 & & & & \\
+            0.2 & 1 & 3 & 1 & 0.2 & & & \\
+            \cdots & \cdots & \cdots & \cdots & \cdots & \cdots & \\
+            & & & 0.2 & 1 & 3 & 1 \\
+            & & & & 0.2 & 1 & 3
+        \end{matrix}
+    \right)  
+    \bm{\text{\bf{x}}} = 
+    \left(
+        \begin{matrix}
+            1 \\ 2 \\ 3 \\ \cdots \\ N-1 \\ N
+        \end{matrix}
+    \right)
+\]
+Po lewej stronie równania jest macierz diagonalna, silnie diagonalnie dominująca o wymiarze N.
+Przy tej strukturze macierzy \(x_{i}\), dla \(i \in [3;N-2]\) będzie dany równaniem
+\[
+    x_{i} = \frac{1}{a_{ii}}(b_{i} - a_{i,i-2}x_{i-2} - a_{i,i-1}x_{i-1} 
+    - a_{i,i+1}x_{i+1}-a_{i,i+2}x_{i+2})
+\]
+Przy każdym obliczaniu \(x_{i}\) redukujemy ilość dodawań z \(N-1\) na \(4\).
+Dla \(i = 1, 2, N, N-1\) ze wzoru pozbywamy się wyrazu, 
+którego otrzymanie byłoby próbą wydostania się poza wymiary macierzy 
+--- na przykład dla \(i = 1\) pozbywamy się wyrazów \(a_{i, i-2}x_{i-2}\) oraz 
+\(a_{i, i-1}x_{i-1}\).
+
+\subsection{Różnice w implementacji metod}
+W obydwu metodach iteracja przebiega następująco:
+\begin{enumerate}
+    \item Obliczenie wyrazów \(x_{1}\) i \(x_{2}\)
+    \item Obliczenie w pętli wyrazów od \(x_{3}\) do \(x_{N-2}\)
+    \item Obliczenie wyrazów \(x_{N-1}\) i \(x_{N}\)
+\end{enumerate}
+
+W metodzie Jacobiego kolejność kroków może być zamieniona.
+
+Różnice pojawiają się w przechowywaniu nowych wartości. W obydwu przypadkach potrzebujemy dwóch 
+tablic --- jedną na nowo obliczone wartości, drugą na wartości z poprzedniej iteracji.
+W metodzie Jacobiego po znalezieniu kolejnej iteracji \(\bm{\text{\bf{x}}}\) i sprawdzeniu czy 
+otrzymaliśmy wynik przypisujemy te wartości do ,,starej'' tablicy (tej, z której bierzemy 
+wartości do obliczania wyrazów \(\bm{\text{\bf{x}}})\) i idziemy do kolejnej iteracji.
+
+W metodzie Gaussa-Seidela nowe wartości wstawiamy do tej samej tablicy, z której odczytujemy do 
+obliczania wyrazów \(\bm{\text{\bf{x}}}\). Druga tablica jest nam potrzebna, aby sprawdzić czy
+zbliżyliśmy się wystarczająco do rozwiązania --- wartości do niej kopiujemy na początku pętli.
+
+\pagebreak
+Na wykresie widać szybkość zbiegania kolejnych przybliżeń \(\bm{\text{\bf{x}}}\) w \(i\)-tej 
+iteracji do właściwego rozwiązania. Metoda Gaussa-Seidela po 29 iteracjach dała rozwiązanie
+identyczne z wynikiem otrzymanym w Mathematice. Metoda Jacobiego zbiegała dużo wolniej i dopiero
+po 155 iteracji otrzymano rozwiązanie.
+
+\input{plot.tex}
+\end{document}
