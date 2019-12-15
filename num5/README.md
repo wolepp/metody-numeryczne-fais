@@ -11,3 +11,7 @@ Kompilacja bez optymalizacji `-O2`: polecenie `make` a następnie `make run`.
 Wartości przybliżeń obliczane są w programie Mathematica w notebooku `NUM5.nb`. Do poprawnego działania potrzebne jest wcześniejsze uruchomienie `NUM5.out`.
 
 Wyniki są zapisane do plików `przyblizenia-gauss.csv` i `przyblizenia-jacobi.csv`.
+
+## Czyszczenie katalogu
+
+Polecenie `make clean` czyści folder z plików *.csv, *.o i *.out
