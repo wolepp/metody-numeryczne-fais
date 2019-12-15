@@ -12,10 +12,13 @@ all: $(TARGET)
 $(TARGET): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJECTS)
 
-.PHONY: all clean release
+.PHONY: all clean release run
 
 clean:
-	rm -f *.o *.out
+	rm -f *.o *.out *.csv
+
+run:
+	./$(TARGET)
 
 release: CXXFLAGS += -o2
 release: all
