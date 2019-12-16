@@ -18,5 +18,8 @@ $(TARGET): $(OBJECTS)
 clean:
 	rm -f *.o *.out
 
+run: release
+	./$(TARGET)
+
 release: CXXFLAGS += -o2
 release: all
