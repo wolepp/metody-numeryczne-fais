@@ -89,9 +89,10 @@ if __name__ == "__main__":
                 plt.legend()
 
             #!
-                filename = 'plots/' + '_'.join(
+                filename = '_'.join(
                     ['plot', fw.str, f.str, 'nr', str(nr_zestawu+1)])
-                plt.savefig(filename + '.pgf')
+                # plt.savefig(filename + '.pgf')
+                plt.savefig(filename + '.png')
                 plt.clf()
             #!
                 #! plt.show()
