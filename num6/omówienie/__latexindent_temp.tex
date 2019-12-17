@@ -1,0 +1,54 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{graphicx}
+\usepackage[]{latexsym}
+\usepackage[]{amsmath}
+\usepackage[]{pgf}
+\usepackage[]{float}
+\usepackage[MeX]{polski}
+\usepackage[utf8]{inputenc}
+\usepackage[figurename=Wykres]{caption}
+
+\author{Wojciech Lepich \and Nomen Nescio}
+\title{NUM6. Wykresy}
+\begin{document}
+
+\renewcommand*\listfigurename{Spis wykresów}
+\maketitle
+\listoffigures
+
+\section{Funkcja \(y(x) = \frac{1}{1+25x^2}\)}
+\subsection{Węzły jednorodne}
+
+\begin{figure}[H]
+    \begin{center}
+        \input{../plots/plot_wezly_jedn_y_nr_1.pgf}        
+    \end{center}
+    \caption{Węzły jednorodne, funkcja \(y\), \(N=2, 4\)}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{center}
+        \input{../plots/plot_wezly_jedn_y_nr_2.pgf}        
+    \end{center}
+    \caption{Węzły jednorodne, funkcja \(y\), \(N=6, 8, 16, 32\)}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{center}
+        \input{../plots/plot_wezly_jedn_y_nr_3.pgf}        
+    \end{center}
+    \caption{Węzły jednorodne, funkcja \(y\), \(N=6, 64\)}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{center}
+        \input{../plots/plot_wezly_jedn_y_nr_4.pgf}        
+    \end{center}
+    \caption{Węzły jednorodne, funkcja \(y\), \(N=5,7,15,31\)}
+\end{figure}
+
+\subsection{Węzły cosinus}
+
+
+
+\end{document}

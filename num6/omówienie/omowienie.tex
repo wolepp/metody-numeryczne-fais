@@ -1,0 +1,204 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{graphicx}
+\usepackage[]{latexsym}
+\usepackage[]{amsmath}
+\usepackage[]{mathtools}
+\usepackage[]{bm}
+\usepackage[]{listings}
+\usepackage[]{color}
+\usepackage[]{pgf}
+\usepackage[MeX]{polski}
+\usepackage[utf8]{inputenc}
+\usepackage[figurename=Wykres]{caption}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{
+    language=Python,
+    frame=tb,
+    aboveskip=3mm,
+    belowskip=3mm,
+    numbers=none,
+    basicstyle=\ttfamily\small, 
+    keywordstyle=\color{blue},
+    commentstyle=\color{dkgreen},
+    stringstyle=\color{mauve},
+    showstringspaces=false,
+    breaklines=true,
+}
+
+\author{Wojciech Lepich \and Nomen Nescio}
+\title{NUM6. Wielomiany interpolacyjne Lagrange'a}
+
+\begin{document}
+\maketitle
+
+\section{Teoria}
+
+Interpolacja to metoda numeryczna, która wyznacza nieznane wartości funkcji
+pomiędzy węzłami, czyli punktami, dla których wartość funkcji jest znana.
+
+Jedną z metod interpolacji jest interpolacja wielomianowa. Mając \(N\) znanych
+punktów można znaleźć jednoznacznie wielomian stopnia \(n-1\), który przechodzi
+przez wszystkie punkty.
+
+Wzór na wielomian interpolacyjny Lagrange'a stopnia \(n-1\):
+\[f(x) = \sum_{j=1}^{n}l_{j}(x)f_{j}\text{,}\]
+gdzie
+\[
+    l_{j}=
+    \frac
+        {(x-x_1)\ldots(x-x_{j-1})(x-x_{j+1})\ldots(x-x_n)}
+        {(x_j-x_1)\ldots(x_j-x_{j-1})(x_j-x_{j+1})\ldots(x_j-x_n)}.
+\]
+
+\section{Omówienie}
+W zadaniu należało znaleźć i wykreślić wielomiany interpolacyjne \(W_n(x)\) na 
+przedziale \(x\in \langle -1, 1 \rangle \) dla funkcji 
+\(y(x) = \frac{1}{1+25x^2}\) oraz \(\tilde{y}=\frac{1}{1+x^2}\) dla
+\begin{itemize}
+    \item jednorodnych węzłów interpolacji: 
+        \(x_i=-1+2\frac{1}{n+1} \; (i=0,\ldots,n)\)
+    \item \(x_i=\cos(\frac{2i+1}{2(n+1)}\pi) \; (i = 0,\ldots, n)\)
+\end{itemize}
+
+\subsection{Kod}
+Zadanie rozwiązałem w Pythonie z użyciem bibliotek matplotlib oraz numpy do
+wykreślenia wykresów.
+
+Funkcje \(y\) oraz \(\tilde{y}\) to odpowiednio funkcje \lstinline{y(x)} oraz
+\lstinline{y_prim(x)}. 
+
+\pagebreak
+Funkcja \lstinline{W(xlist, f)} przyjmuje listę punktów \lstinline{xlist}
+oraz funkcję \lstinline{f}, z której oblicza wartości punktów.
+Funkcja \lstinline{W} zwraca funkcję przyjmującą jeden argument, czyli szukany
+wielomian. Tę zwróconą funkcję można wywołać dla dowolnego argumentu.
+\begin{lstlisting}[language=Python]
+def W(xlist: list, f: callable) -> callable:
+    return lambda x: sum([l(j, xlist)(x) * f(xj) for j, xj in enumerate(xlist)])
+\end{lstlisting}
+
+W funkcji \lstinline{W} jest wywoływana funkcja \lstinline{l(i, xlist)}.
+Ta funkcja zwraca funkcję jednoargumentową, będącą wyrazem \(l_j(x)\) we 
+wzorze na wielomian.
+
+\begin{lstlisting}[language=Python]
+def l(i: int, xlist: list):
+    def lj(x):
+        prod = 1
+        xi = xlist[i]
+        for j, xj in enumerate(xlist):
+            if j != i:
+                prod *= (x-xj)/(xi-xj)
+        return prod
+    return lj
+\end{lstlisting}
+
+\subsection{Wyniki}
+Wybrałem cztery zestawy \(n\):
+\begin{itemize}
+    \item \((2,4)\)
+    \item \((6,8, 16, 32)\)
+    \item \((6,64)\)
+    \item \((5,7,15,31)\)
+\end{itemize}
+Z zadanymi dwoma wyborami węzłów interpolacji oraz dwiema funkcjami otrzymałem
+16 wykresów --- przedstawię wszystkie dla jednorodnych węzłów i funkcji 
+\(y(x)\), oraz wybrane dla pozostałych kombinacji.
+
+\begin{figure}
+    \begin{center}
+        \input{../plots/plot_wezly_jedn_y_nr_1.pgf}        
+    \end{center}
+    \caption{Wielomiany stopnia 2 i 4, dla funkcji \(y(x)\)}
+    \label{jedn_y_2,4}
+\end{figure}
+
+\begin{figure}
+    \begin{center}
+        \input{../plots/plot_wezly_jedn_y_nr_2.pgf}        
+    \end{center}
+    \caption{Wielomiany stopnia 6, 8, 16 i 32, dla funkcji \(y(x)\)}\label{jedn_y_6,8,16,32}
+\end{figure}
+
+\begin{figure}
+    \begin{center}
+        \input{../plots/plot_wezly_jedn_y_nr_3.pgf}        
+    \end{center}
+    \caption{Wielomiany stopnia 6, 64 dla funkcji \(y(x)\)}\label{jedn_y_6,64}
+\end{figure}
+
+\begin{figure}
+    \begin{center}
+        \input{../plots/plot_wezly_jedn_y_nr_4.pgf}        
+    \end{center}
+    \caption{Wielomiany stopnia 5, 7, 15, 31 dla funkcji \(y(x)\)}
+    \label{jedn_y_5,7,15,31}
+\end{figure}
+
+Z wykresu~\ref{jedn_y_2,4} na stronie~\pageref{jedn_y_2,4} widać, że dla małych 
+n interpolacja funkcji \(y\) jest wręcz bezsensowna --- wartości nie są 
+jakkolwiek dobrze przybliżone. Wraz ze zwiększaniem ilości węzłów interpolacji 
+wykresy wielomianów są coraz bliżej wykresu funkcji, a więc funkcja jest coraz
+lepiej przybliżana. Kosztem są oscylacje na brzegach przedziału, co widać dobrze
+na wykresie~\ref{jedn_y_6,64} na stronie~\pageref{jedn_y_6,64} --- wykres
+wielomianu prawie idealnie pokrywa się z wykresem funkcji, ale dla
+\(x > 0,75\) co do modułu, wielomian zaczyna się bardzo mocno wahać.
+
+Na wykresie~\ref{jedn_y_5,7,15,31} na stronie~\pageref{jedn_y_5,7,15,31}
+są wielomiany stopnia nieparzystego. Jak widać, dla funkcji \(y\), która jest
+symetryczna względem osi OY, lepiej skorzystać z wielomianów stopnia parzystego,
+ponieważ \(y(x) = y(-x)\) ale już nie \(W_n(x) = W_n(-x)\).
+
+\subsection{Węzły cosinus}
+
+Aby pozbyć się oscylacji na brzegach przedziału można skorzystać z węzłów danych
+wzorem: \(x_i=\cos(\frac{2i+1}{2(n+1)}\pi) \; (i = 0,\ldots, n)\).
+Wraz ze zbliżaniem się do brzegów węzły zagęszczają się, co powoduje mniejsze
+wahania wartości. Dobrze to widać na wykresie~\ref{cos_y_6,64} na 
+stronie~\pageref{cos_y_6,64}. Tym razem dla 64 węzłów interpolacji wielomian
+bardzo dobrze przybliża funkcję, nawet na brzegach. Widać także zagęszczenie
+punktów na brzegach.
+
+\begin{figure}[h]
+    \begin{center}
+        \input{../plots/plot_wezly_cos_y_nr_3.pgf}
+    \end{center}
+    \caption{Wielomiany stopnia 6, 64 dla funkcji \(y(x)\)}
+    \label{cos_y_6,64}
+\end{figure}
+
+\subsection{Funkcja \(\tilde{y}\)}
+Dla tej funkcji wielomiany aby dobrze przybliżyć funkcję wystarczają
+wielomiany niższych stopni niż są do tego potrzebne w przypadku funkcji \(y\).
+
+\begin{figure}[h]
+    \begin{center}
+        \input{../plots/plot_wezly_cos_y_prim_nr_1.pgf}
+    \end{center}
+    \caption{Wielomiany stopnia 2, 4 dla funkcji \(\tilde{y}(x)\)}
+    \label{jedn_y_prim_2,4}
+\end{figure}
+
+Jak widać na wykresie~\ref{jedn_y_prim_2,4} na stronie~\pageref{jedn_y_prim_2,4}
+już wielomian czwartego stopnia dobrze przybliża funkcję 
+\(\tilde{y}(x)=\frac{1}{1+x^2}\). 
+
+\begin{figure}[h]
+    \begin{center}
+        \input{../plots/plot_wezly_cos_y_prim_nr_2.pgf}
+    \end{center}
+    \caption{Wielomiany stopnia 6, 8, 16, 32 dla funkcji \(\tilde{y}(x)\)}
+    \label{jedn_y_prim_6,8,16,32}
+\end{figure}
+
+Na wykresie~\ref{jedn_y_prim_6,8,16,32} na stronie~\pageref{jedn_y_prim_6,8,16,32}
+widać że każdy z wielomianów stopni 6, 8, 16 i 32 przybliża dobrze wykres funkcji.
+
+Stąd można wywnioskować, że wielomiany interpolacyjne Lagrange'a dużo lepiej
+radzą sobie z funkcją \(\tilde{y}\) niż z funkcją \(y\).
+
+
+\end{document}
