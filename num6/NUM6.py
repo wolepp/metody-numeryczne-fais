@@ -56,7 +56,7 @@ if __name__ == "__main__":
     ZNANY_PUNKT = wezly_jednorodne(4)[1]
     assert y(ZNANY_PUNKT) == W(wezly_jednorodne(4), y)(ZNANY_PUNKT)
 
-    ZESTAWY_PUNTKOW = [
+    ZESTAWY_N = [
         [2, 4],
         [6, 8, 16, 32],
         [6, 64],
@@ -67,14 +67,17 @@ if __name__ == "__main__":
 
     x = np.linspace(-1, 1, 200)
 
-    for nr_zestawu, zestaw_punktow in enumerate(ZESTAWY_PUNTKOW):
+    for nr_zestawu, zestaw_n in enumerate(ZESTAWY_N):
         for f in FUNKCJE:
             for fw in FUNKCJE_WEZLOW:
 
-                plt.axes().set_ylim([-0.5, 1.5])
-                plt.plot(x, [f(x_) for x_ in x], label='$y(x)=$' + f.tex_str)
+                plt.figure(figsize=(5.5, 3.5))
+                plt.axes().set_ylim([-0.25, 1.25])
 
-                for N in zestaw_punktow:
+                plt.plot(x, [f(x_) for x_ in x], label='$y(x)=$' + f.tex_str)
+                #! plt.plot(x, [f(x_) for x_ in x], label='$y(x)$)
+
+                for N in zestaw_n:
                     wezly = fw(N)
                     wielomian = W(wezly, f)
                     plt.plot(wezly, [wielomian(x_) for x_ in wezly], '.')
@@ -82,11 +85,13 @@ if __name__ == "__main__":
 
                 plt.xlabel('x')
                 plt.ylabel('y')
-                plt.title("Wielomiany Lagrange'a dla N={}".format(
-                    ', '.join([str(n) for n in zestaw_punktow])))
+                plt.title("N={}".format(', '.join([str(n) for n in zestaw_n])))
                 plt.legend()
 
+            #!
                 filename = 'plots/' + '_'.join(
                     ['plot', fw.str, f.str, 'nr', str(nr_zestawu+1)])
                 plt.savefig(filename + '.pgf')
-                # plt.show()
+                plt.clf()
+            #!
+                #! plt.show()
