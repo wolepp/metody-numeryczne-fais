@@ -1,6 +1,7 @@
 *.pdf
 zips/
 playground/
+todo_readme.md
 
 # data
 *.data
