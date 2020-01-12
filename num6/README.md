@@ -1,4 +1,6 @@
-# Zadanie numeryczne NUM6
+# NUM6
+
+Wyszukiwanie wielomianów interpolacyjnych Lagrange'a.
 
 ## Kompilacja i uruchamianie
 

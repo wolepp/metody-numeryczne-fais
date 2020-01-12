@@ -1,4 +1,6 @@
-# Zadanie numeryczne NUM5
+# NUM5
+
+Rozwiązywanie układów równań metodami iteracyjnymi Jacobiego i Gaussa-Seidela.
 
 ## Kompilacja i uruchamianie
 
