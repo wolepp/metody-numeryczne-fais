@@ -19,7 +19,10 @@ def wartosci_ksi(f: Sequence[float]):
         np.diagflat([1]*(N-3), k=-1) +\
         np.diagflat([1]*(N-3), k=1)
     C = cholesky(A, lower=True)
+
     b = [f[i] - 2*f[i+1] + f[i+2] for i in range(N-2)]
+    h = 2 / N
+    b = np.multiply(6/h**2, b)
 
     y = solve_triangular(C, b, lower=True)
     x = solve_triangular(C.T, y, lower=False)
@@ -27,3 +30,6 @@ def wartosci_ksi(f: Sequence[float]):
 
 
 if __name__ == "__main__":
+    ksi = wartosci_ksi([y(x) for x in wezly_jednorodne()])
+    print(ksi)
+    print(type(ksi))
