@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-from typing import Sequence, Tuple, Callable
-import numpy as np
-from scipy.linalg import cholesky, solve_triangular
+from typing import Callable, Sequence
+
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
+from scipy.linalg import cholesky, solve_triangular
 
 # ustawienia matplotlib dla lepszego wyświetlania w LaTeX.
 matplotlib.use("pgf")
@@ -99,4 +100,3 @@ if __name__ == "__main__":
     # plt.show()
     filename = '_'.join(['spline', 'N', str(N)])
     plt.savefig(filename + '.pgf')
-
