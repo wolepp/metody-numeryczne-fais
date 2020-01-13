@@ -1,0 +1,188 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{graphicx}
+\usepackage[]{latexsym}
+\usepackage[]{amsmath}
+\usepackage[]{mathtools}
+\usepackage[]{bm}
+\usepackage[]{listings}
+\usepackage[]{color}
+\usepackage[]{pgf}
+\usepackage[]{float}
+\usepackage[MeX]{polski}
+\usepackage[utf8]{inputenc}
+\usepackage[figurename=Wykres]{caption}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{
+    language=Python,
+    frame=tb,
+    aboveskip=3mm,
+    belowskip=3mm,
+    numbers=none,
+    basicstyle=\ttfamily\small, 
+    keywordstyle=\color{blue},
+    commentstyle=\color{dkgreen},
+    stringstyle=\color{mauve},
+    showstringspaces=false,
+    breaklines=true,
+}
+
+\author{Wojciech Lepich \and Nomen Nescio}
+\title{NUM7. Naturalne splajny kubiczne}
+
+\begin{document}
+\maketitle
+
+\section{Teoria}
+
+Interpolacja to metoda numeryczna, która wyznacza nieznane wartości funkcji
+pomiędzy węzłami, czyli punktami, dla których wartość funkcji jest znana.
+
+Interpolacja wielomianowa jest nieskomplikowana. Przy wielu równoodległych 
+węzłach interpolacji może prowadzić do oscylacji Rungego zbliżając się do
+brzegów interpolowanego odcinka funkcji.
+
+Aby ich uniknąć stosuje się interpolację za pomocą funkcji sklejanych.
+Funkcja sklejana rzędu \textit{k}, ``splajn'' (ang. \textit{spline}), to funkcja
+która:
+\begin{itemize}
+    \item lokalnie jest wielomianem rzędu \textit{k}
+    \item jest (\textit{k}--1)-krotnie różniczkowalna w węzłach.
+\end{itemize}
+
+Najczęściej używane są funkcje sklejane rzędu 3, czyli ``splajny kubiczne''.
+
+\subsection{Splajny kubiczne}
+
+Do wyznaczenia funkcji sklejanych potrzebne są wartości funkcji w węzłach oraz
+drugie pochodne wyrażenia interpolacyjnego w węzłach, oznaczane
+literą \nolinebreak{\( \xi \)}. W każdym przedziale 
+\(\langle x_j, x_{j+1} \rangle, j=1,2,\ldots,n-1 \) wyznaczamy wielomian
+trzeciego stopnia
+\[
+    y_j(x) = Af_j + Bf_{j+1} + C\xi_j + D\xi_{j+1},
+\] gdzie
+\[
+    A = \frac{x_{j+1}-x}{x_{j+1}-x_j}, B = \frac{x-x_j}{x_{j+1}-x_j},
+\]
+\[
+    C = \frac{1}{6} (A^3-A) {(x_{j+1}-x_j)}^2,
+    D = \frac{1}{6} (B^3-B) {(x_{j+1}-x_j)}^2
+\]
+
+Zakładając, że jest \textit{n} węzłów interpolacji, są \textit{n}--2 punktów
+sklejania, w których żądana jest ciągłość pochodnej. Stąd, przy równoodległych
+węzłach, pojawia się poniższy układ \textit{n}--2 równań z n niewiadomymi.
+Dla naturalnego splajnu kubicznego przyjmuje się, że \(\xi_1 = \xi_n = 0\).
+
+\[
+\begin{bmatrix}
+    4 & 1 &   &     \\
+    1 & 4 & 1 &     \\
+      & 1 & 4 & 1   \\
+    \cdots & \cdots & \cdots & \cdots & \cdots & \cdots & \cdots \\
+    & & & & 1 & 4 & 1\\
+    & & & & & 1 & 4
+\end{bmatrix}
+\begin{bmatrix}
+    \xi_2 \\ \xi_3 \\ \xi_4 \\ \vdots \\ \xi_{n-2} \\ \xi_{n-1}
+\end{bmatrix}
+= \frac{6}{h^2}
+\begin{bmatrix}
+    f_1 - 2f_2 + f_3 \\
+    f_2 - 2f_3 + f_4 \\
+    f_3 - 2f_4 + f_5 \\
+    \vdots \\
+    f_{n-3} - 2f_{n-2} + f_{n-1} \\
+    f_{n-2} - 2f_{n-1} + f_{n} \\
+\end{bmatrix}
+\]
+
+Łatwo znaleźć faktoryzację Choleskiego macierzy po lewej stronie (koszt O(n)).
+
+\section{Omówienie}
+
+\subsection{Kod}
+
+Poniższa funkcja znajduje wielomian dla przedziału \(\langle xi, xi1 \rangle \).
+Parametry \texttt{yi, yi1} to wartości funkcji w punktach \texttt{xi, xi1}.
+\texttt{ksi} oraz \texttt{ksi1} to wartości drugich pochodnych w punktach.
+\begin{lstlisting}[caption={funkcja s}, language=Python]
+def s(xi, xi1, yi, yi1, ksi, ksi1) -> Callable
+    def wielomian(x) -> Callable:
+        A = (xi1 - x) / (xi1 - xi)
+        B = (x - xi) / (xi1 - xi)
+        C = ((A**3 - A) * (xi1 - xi)**2) / 6
+        D = ((B**3 - B) * (xi1 - xi)**2) / 6
+        w = A*yi + B*yi1 + C*ksi + D*ksi1
+        return w
+    return wielomian
+\end{lstlisting}
+
+\pagebreak
+
+\begin{lstlisting}[caption={Obliczanie wartości \(\xi \)},language=Python]
+def wartosci_ksi(yi: Sequence[float]) -> Sequence[float]:
+    A = np.diagflat([4]*(N-1), k=0) +\
+        np.diagflat([1]*(N-2), k=-1) +\
+        np.diagflat([1]*(N-2), k=1)
+    C = cholesky(A, lower=True)
+
+    b = [yi[i] - 2*yi[i+1] + yi[i+2] for i in range(N-1)]
+    h = 2/N
+    b = np.multiply(6/h**2, b)
+
+    y = solve_triangular(C, b, lower=True)
+    x = solve_triangular(C.T, y, lower=False)
+    Ksi = [0, *x, 0]
+    return Ksi
+\end{lstlisting}
+W funkcji \lstinline{wartosci_ksi} znajdywane są wartości drugich pochodnych
+wyrażenia interpolowanego. Na trójdiagonalnej macierzy A dokonana jest
+faktoryzacja Choleskiego z pomocą pakietu SciPy. Następnie tworzony jest wektor
+b oraz wyznaczana długość \textit{h} przedziału.
+Równanie obliczane jest przez forward i backward substitution. 
+W przedostatniej linijce tworzona jest lista wartości \(\xi \).
+
+\subsection{Wyniki}
+
+Na wykresach funkcja \(f(x) = \frac{1}{1+25x^2}\) zaznaczona jest przerywaną 
+czerwoną linią. Każdy wielomian składający się na splajn jest zaznaczony linią
+ciągłą, dla odróżnienia w różnych kolorach.
+
+\begin{figure}[H]
+    \begin{center}
+        \input{../wykresy/spline_N_8.pgf}        
+    \end{center}
+\end{figure}
+
+Dla \(N=8\) splajn już na pierwszy rzut oka nie jest wystarczająco dokładny,
+aby korzystać z niego jako interpolacji funkcji \(f\). Spróbujmy zwiększyć N.
+
+\begin{figure}[H]
+    \begin{center}
+        \input{../wykresy/spline_N_14.pgf}        
+    \end{center}
+\end{figure}
+
+Dla \(N=14\) splajn pokrywa funkcję \(f\) na tyle dobrze, że na wykresie
+całkowicie przesłania czerwoną przerywaną linię. Sprawdźmy \(N\) nieparzyste.
+
+\begin{figure}[H]
+    \begin{center}
+        \input{../wykresy/spline_N_11.pgf}        
+    \end{center}
+\end{figure}
+
+Ze względu na symetryczność funkcji w przedziale, parzyste \(N\) wyznacza węzeł
+w punkcie \(x=0\), To powoduje, że splajn przechodzi przez maksimum funkcji 
+\(f\). Nieparzyste \(N\), w tym przypadku \(N=11\) omija ten charakterystyczny
+dla funkcji punkt. W związku z tym, dla funkcji takich jak \(f\) lepiej
+skorzystać z \(N\) parzystego.
+
+
+
+
+\end{document}
