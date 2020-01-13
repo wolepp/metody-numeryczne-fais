@@ -5,8 +5,12 @@ from scipy.linalg import cholesky, solve_triangular
 N = 8
 
 
-def y(x):
+def f(x):
     return 1 / (1 + 25 * x**2)
+
+def s(x):
+    pass
+
 
 
 def wezly_jednorodne():
@@ -14,13 +18,13 @@ def wezly_jednorodne():
     return [-1 + 2*(i/(N)) for i in range(N+1)]
 
 
-def wartosci_ksi(f: Sequence[float]):
+def wartosci_ksi(yi: Sequence[float]):
     A = np.diagflat([4]*(N-2), k=0) +\
         np.diagflat([1]*(N-3), k=-1) +\
         np.diagflat([1]*(N-3), k=1)
     C = cholesky(A, lower=True)
 
-    b = [f[i] - 2*f[i+1] + f[i+2] for i in range(N-2)]
+    b = [yi[i] - 2*yi[i+1] + yi[i+2] for i in range(N-2)]
     h = 2/N
     b = np.multiply(6/h**2, b)
 
@@ -30,6 +34,6 @@ def wartosci_ksi(f: Sequence[float]):
 
 
 if __name__ == "__main__":
-    ksi = wartosci_ksi([y(x) for x in wezly_jednorodne()])
+    ksi = wartosci_ksi([f(x) for x in wezly_jednorodne()])
     print(ksi)
     print(type(ksi))
