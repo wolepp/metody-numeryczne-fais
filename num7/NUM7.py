@@ -25,6 +25,7 @@ def f(x: float) -> float:
     """Funkcja interpolowana."""
     return 1 / (1 + 25 * x**2)
 
+
 def s(xi, xi1, yi, yi1, ksi, ksi1) -> Callable:
     def wielomian(x) -> Callable:
         A = (xi1 - x) / (xi1 - xi)
@@ -64,7 +65,6 @@ if __name__ == "__main__":
     # przestrzeń liniowa <-1, 1> próbkowana parametrem num
     linspace = np.linspace(-1, 1, num=DOKLADNOSC_PRZEDZIALU*(N))
 
-
     # ustawienie wykresu
     plt.figure(figsize=(5.5, 3.5))
     plt.xlabel('x')
@@ -74,7 +74,6 @@ if __name__ == "__main__":
 
     # rysowanie funkcji f
     plt.plot(linspace, list(map(f, linspace)), 'r--')
-
 
     # punkty sklejania
     xi = wezly_jednorodne()
