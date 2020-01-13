@@ -1,22 +1,35 @@
-from typing import Sequence
+#!/usr/bin/env python3
+
+from typing import Sequence, Tuple, Callable
 import numpy as np
 from scipy.linalg import cholesky, solve_triangular
+import matplotlib.pyplot as plt
 
-N = 8
+N = 10
+DOKLADNOSC_PRZEDZIALU = 30
 
 
-def f(x):
+def f(x: float) -> float:
+    """Funkcja interpolowana."""
     return 1 / (1 + 25 * x**2)
 
-def s(x):
-    pass
+def s(xi, xi1, yi, yi1, ksi, ksi1) -> Callable:
+    def wielomian(x) -> Callable:
+        A = (xi1 - x) / (xi1 - xi)
+        B = (x - xi) / (xi1 - xi)
+        C = ((A**3 - A) * (xi1 - xi)**2) / 6
+        D = ((B**3 - B) * (xi1 - xi)**2) / 6
+        w = A*yi + B*yi1 + C*ksi + D*ksi1
+        return w
+    return wielomian
 
-def wezly_jednorodne():
+
+def wezly_jednorodne() -> Sequence[float]:
     """Lista jednorodnych węzłów interpolacji."""
     return [-1 + 2*(i/(N)) for i in range(N+1)]
 
 
-def wartosci_ksi(yi: Sequence[float]):
+def wartosci_ksi(yi: Sequence[float]) -> Sequence[float]:
     A = np.diagflat([4]*(N-2), k=0) +\
         np.diagflat([1]*(N-3), k=-1) +\
         np.diagflat([1]*(N-3), k=1)
@@ -35,6 +48,24 @@ def wartosci_ksi(yi: Sequence[float]):
 
 
 if __name__ == "__main__":
-    ksi = wartosci_ksi([f(x) for x in wezly_jednorodne()])
-    print(ksi)
-    print(type(ksi))
+    space = np.linspace(-1, 1, num=DOKLADNOSC_PRZEDZIALU*(N-1))
+    # plt.plot(space, list(map(f, space)))
+
+    xi = wezly_jednorodne()
+    yi = [f(x) for x in xi]
+    war_ksi = wartosci_ksi(yi)
+
+    for nr_przedzialu in range(N-1):
+        x_0 = xi[nr_przedzialu]
+        x_1 = xi[nr_przedzialu+1]
+        y_0 = yi[nr_przedzialu]
+        y_1 = yi[nr_przedzialu+1]
+        ksi_0 = war_ksi[nr_przedzialu]
+        ksi_1 = war_ksi[nr_przedzialu+1]
+        wielomian = s(x_0, x_1, y_0, y_1, ksi_0, ksi_1)
+        przedzial = np.linspace(x_0, x_1, DOKLADNOSC_PRZEDZIALU)
+
+        plt.plot(przedzial, list(map(wielomian, przedzial)))
+
+
+    plt.show()
