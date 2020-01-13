@@ -3,6 +3,9 @@ zips/
 playground/
 todo_readme.md
 
+# mypy
+.mypy_cache/
+
 # data
 *.data
 *.csv
