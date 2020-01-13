@@ -11,8 +11,6 @@ def f(x):
 def s(x):
     pass
 
-
-
 def wezly_jednorodne():
     """Lista jednorodnych węzłów interpolacji."""
     return [-1 + 2*(i/(N)) for i in range(N+1)]
@@ -30,7 +28,10 @@ def wartosci_ksi(yi: Sequence[float]):
 
     y = solve_triangular(C, b, lower=True)
     x = solve_triangular(C.T, y, lower=False)
-    return x
+    # x ma wartości ksi od drugiego do przedostatniego
+    # dla naturalnego splajnu kubicznego pierwsza i ostatnia wartość wynosi 0
+    Ksi = [0, *x, 0]
+    return Ksi
 
 
 if __name__ == "__main__":
