@@ -21,7 +21,7 @@ def wartosci_ksi(f: Sequence[float]):
     C = cholesky(A, lower=True)
 
     b = [f[i] - 2*f[i+1] + f[i+2] for i in range(N-2)]
-    h = 2 / N
+    h = 2/N
     b = np.multiply(6/h**2, b)
 
     y = solve_triangular(C, b, lower=True)
