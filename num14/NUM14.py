@@ -29,6 +29,21 @@ def algorytmQR(A):
     return np.diag(A), i
 
 
+def metodaPotegowa(A):
+    y = np.ones(A.shape[1])
+    y_old = y.copy()
+
+    z = np.dot(A, y)
+    y = z / np.linalg.norm(z)
+    i = 0
+    while not wektoryZbiezne(y, y_old):
+        i += 1
+        y_old = y
+        z = np.dot(A, y)
+        y = z / np.linalg.norm(z)
+    return np.linalg.norm(z), i
+
+
 if __name__ == "__main__":
     M = np.array([
         [3,   6,   6,  9],
@@ -44,8 +59,15 @@ if __name__ == "__main__":
         [4, -3, 2, 2]
     ])
 
-    print('Macierz M:')
+    print('Wartości własne macierzy M:')
     eigenM = linalg.eigvals(M)
     print('{} : SciPy'.format(np.real(eigenM[::-1])))
     eigenQR, iteracjiQR = algorytmQR(M)
     print('{} : QR, {} iteracji'.format(eigenQR, iteracjiQR))
+
+    print()
+    print('Największa wartość własna macierzy B:')
+    maxEigen = linalg.eigh(B, eigvals_only=True)[-1]
+    print('{} : SciPy'.format(maxEigen))
+    eigenPot, iteracjiPot = metodaPotegowa(B)
+    print('{} : met. potegowa, {} iteracji'.format(eigenPot, iteracjiPot))
