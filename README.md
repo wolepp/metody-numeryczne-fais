@@ -8,6 +8,7 @@ Stosowanej na Uniwersytecie Jagiellońskim.
 
 * [num5](https://github.com/wolepp/metody-numeryczne-fais/tree/master/num5) - iteracyjne rozwiązywanie układów równań
 * [num6](https://github.com/wolepp/metody-numeryczne-fais/tree/master/num6) - znajdowanie wielomianów interpolacyjnych Lagrange'a
+* [num7](https://github.com/wolepp/metody-numeryczne-fais/tree/master/num7) - naturalny splajn kubiczny
 
 ## Autor
 
