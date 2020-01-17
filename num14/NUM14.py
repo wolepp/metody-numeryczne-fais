@@ -11,7 +11,7 @@ def wektoryZbiezne(x, y):
     """
     Funkcja sprawdza, czy wektory x i y są do siebie zbliżone
     z dokładnością RTOL i ATOL w poniższy sposób:
-    absolute(x - y) <= (atol + rtol * absolute(y)).
+    absolute(x - y) <= (ATOL + RTOL * absolute(y)).
     """
     return np.allclose(x, y, rtol=RTOL, atol=ATOL)
 
