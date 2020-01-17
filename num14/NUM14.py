@@ -7,10 +7,13 @@ RTOL = 10e-11
 ATOL = 10e-13
 
 
-def zbieznaDiag(A, B):
-    diagA = np.diag(A)
-    diagB = np.diag(B)
-    return np.allclose(diagA, diagB, rtol=RTOL, atol=ATOL)
+def wektoryZbiezne(x, y):
+    """
+    Funkcja sprawdza, czy wektory x i y są do siebie zbliżone
+    z dokładnością RTOL i ATOL w poniższy sposób:
+    absolute(x - y) <= (atol + rtol * absolute(y)).
+    """
+    return np.allclose(x, y, rtol=RTOL, atol=ATOL)
 
 
 def algorytmQR(A):
@@ -18,7 +21,7 @@ def algorytmQR(A):
     Q, R = linalg.qr(A)
     A = np.dot(R, Q)
     i = 0
-    while not zbieznaDiag(A, A_old):
+    while not wektoryZbiezne(np.diag(A), np.diag(A_old)):
         i += 1
         A_old = A
         Q, R = linalg.qr(A)
