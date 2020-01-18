@@ -41,7 +41,7 @@ def metodaPotegowa(A):
         y_old = y
         z = np.dot(A, y)
         y = z / np.linalg.norm(z)
-    return np.linalg.norm(z), i
+    return y, np.linalg.norm(z), i
 
 
 if __name__ == "__main__":
@@ -64,10 +64,20 @@ if __name__ == "__main__":
     print('{} : SciPy'.format(np.real(eigenM[::-1])))
     eigenQR, iteracjiQR = algorytmQR(M)
     print('{} : QR, {} iteracji'.format(eigenQR, iteracjiQR))
-
     print()
-    print('Największa wartość własna macierzy B:')
-    maxEigen = linalg.eigh(B, eigvals_only=True)[-1]
+
+    eigenValues, eigenVectors = linalg.eig(B)
+    maxIndex = np.argmax(eigenValues)
+    maxEigen = np.real(eigenValues[maxIndex])
+    maxEigenVector = eigenVectors[:,maxIndex]
+
+    eigenVecPot, eigenValPot, iterPot = metodaPotegowa(B)
+
+    print('Największa wartośc własna macierzy B:')
     print('{} : SciPy'.format(maxEigen))
-    eigenPot, iteracjiPot = metodaPotegowa(B)
-    print('{} : met. potegowa, {} iteracji'.format(eigenPot, iteracjiPot))
+    print('{} : met. potegowa, {} iteracji'.format(eigenValPot, iterPot))
+    print()
+
+    print('Wektor własny do max wartości własnej macierzy B:')
+    print('{} : SciPy'.format(maxEigenVector))
+    print('{} : met. potegowa, {} iteracji'.format(eigenVecPot, iterPot))
