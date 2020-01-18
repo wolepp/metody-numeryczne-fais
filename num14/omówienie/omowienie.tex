@@ -9,6 +9,7 @@
 \usepackage[]{color}
 \usepackage[]{pgf}
 \usepackage[]{float}
+\usepackage[]{enumitem}
 \usepackage[MeX]{polski}
 \usepackage[utf8]{inputenc}
 
@@ -20,7 +21,7 @@
     frame=tb,
     aboveskip=3mm,
     belowskip=3mm,
-    numbers=none,
+    numbers=left,
     basicstyle=\ttfamily\small, 
     keywordstyle=\color{blue},
     commentstyle=\color{dkgreen},
@@ -39,28 +40,27 @@
 
 \subsection{Zagadnienie własne}
 
-Niech \(\mathbf{A} \in \mathbb{C}^{N\times N} \). Wartość własna macierzy A
-to liczba \(\lambda \in \mathbb{C}\), taka że dla niezerowego wektora
-\(\mathbf{x} \in \mathbb{C}^{N}\):
+Niech \(\mathbf{A} \in \mathbb{C}^{N\times N} \). Wartość własna macierzy
+\(\mathbf{A}\) to liczba \(\lambda \in \mathbb{C}\), taka że:
 \begin{equation}
-    \mathbf{A}\mathbf{x} = \lambda\mathbf{x}.
+    \mathbf{A}\mathbf{x} = \lambda\mathbf{x},
 \end{equation}
-Wektor \(\mathbf{x}\) jest wektorem własnym macierzy \(\mathbf{A}\) do wartości
-własnej \(\lambda \). Problem szukania wartości własnch macierzy to
-zagadnienie własne.
+gdzie \(\mathbf{x}\in \mathbb{C}^N\) to wektor niezerowy. Wektor \(\mathbf{x}\) 
+to wektor własny macierzy \(\mathbf{A}\) do wartości własnej \(\lambda \).
+Zagadnienie własne to problem poszukiwania wartości własnych macierzy.
 
 \subsection{Algorytm QR}
 
-Niech macierz \(\mathbf{A}\) posiada faktoryzację QR, \(\mathbf{A = QR}\).
-Wtedy:
-
+Jeśli macierz \(\mathbf{A}\) posiada faktoryzację QR, to można wyznaczyć jej
+wartości własne algorytmem QR.\@
+Jest to iteracyjna metoda wyznaczania wartości własnych, polegająca na
+wymnażaniu czynników faktoryzacji QR w odwróconej kolejności:
 \begin{equation}
-    \mathbf{A}' = RQ = Q^T AQ    
+    \mathbf{A}' = \mathbf{R}\mathbf{Q} = \mathbf{Q}^T \mathbf{A}\mathbf{Q}
 \end{equation}
 
-Wymnożenie czynników QR w odwrotnej kolejności daje ortogonalną transformację
-podobienśtwa macierzy \(\mathbf{A}\). Można tę procedurę iterować. Zaczynamy
-od \(\mathbf{A_1 = A}\).
+
+W pierwszym kroku zaczynamy od od \(\mathbf{A_1 = A}\).
 \begin{equation}
     \begin{aligned}
         \mathbf{A}_1 = \mathbf{Q}_1\mathbf{R}_1 \\
@@ -71,33 +71,75 @@ od \(\mathbf{A_1 = A}\).
     \end{aligned}
 \end{equation}
 
-W każdym kroku iteracji dokonywana jest faktoryzacja QR, która ma złożoność
-obliczeniową \(O(N^3)\). Dlatego na samym początku należy przekształcić macierz
-do postaci Hessenberga przez podobieństwa ortogonalne (czyli nie zmieniając
-wartości własnych). Dla takiej macierzy złożoność obliczeniową faktoryzacji QR
-wynosi \(O(N^2)\).
+Powyższa iteracja zbieżna jest do macierzy trójkątnej górnej, w której na
+głównej diagonali znajdują się kolejne wartości własne.
+
+Faktoryzacja QR ma złożoność obliczeniową \(\mathcal{O}(N^3)\) na każdą
+iterację, w związku z czym przed iterowaniem należy sprowadzić macierz
+(niesymetryczną) do postaci Hessenberga --- macierzy trójkątnej  górnej
+z dodatkową diagonalą pod diagonalą główną. Dla takiej macierzy złożoność
+faktoryzacji QR wynosi \(\mathcal{O}(N^2)\).
 
 \subsection{Metoda potęgowa}
 
-Niech \(\mathbf{A} \in \mathbb{R}^{N\times N} \) będzie macierzą symetryczną,
-\(\mathbf{A=A}^T\). Taka macierz jest diagonalizowalna, jej wartości własne
-są rzeczywiste, jej unormowane wektory własne tworzą bazę ortonormalną
-w \(\mathbb{R}^N\). Tą bazą niech będzie \( \{\mathbf{e}\} ^N_{i=1} \),
-gdzie \(\mathbf{Ae}_i = \lambda_i\mathbf{e}_i\). Przyjmijmy, że wartości własne
-macierzy \(\mathbf{A}\) są dodatnie i uporządkowane malejąco 
-\(\lambda_1 > \lambda_2 > \cdots > \lambda_0 > 0\).
+Wykorzystując metodę potęgową łatwmo można znaleźć największą i najmniejszą
+wartość własną macierzy symetrycznej. Taka macierz jest diagonalizowalna,
+ma rzeczywiste wartości własne, a jej unormowane wektory tworzą bazę ortogonalną
+w \(\mathbb{R}^N\).
 
+Zakładamy, że wartości własne macierzy są dodatnie i uporządkowane malejąco:
+\(\lambda_1 > \lambda_2 > \cdots > \lambda_n > 0\).
+Biorąc wektor \(\mathbf{y}\in\mathbb{R}^N\) (\( \|\mathbf{y}\|=1\)) mamy
+jego rozkład:
+\begin{equation}
+    \mathbf{y} = \sum_{i=1}^{N}\beta_i \mathbf{e}_i
+\end{equation}
+Obliczając kolejno:
+\begin{equation}
+    \begin{aligned}
+        & \mathbf{A}\mathbf{y} = 
+            \mathbf{A}\sum_{i=1}^{N}\beta_i \mathbf{e}_i = 
+            \sum_{i=1}^{N}\beta_i \mathbf{A}\mathbf{e}_i = 
+            \sum_{i=1}^{N}\beta_i\lambda_i \mathbf{e}_i \\
+        & \mathbf{A}^2\mathbf{y} = 
+            \mathbf{A}\sum_{i=1}^{N}\lambda_i\beta_i \mathbf{e}_i = 
+            \sum_{i=1}^{N}\beta_i\lambda_i^2 \mathbf{e}_i \\
+        & \cdots \\
+        & \mathbf{A}^k\mathbf{y} =
+            \sum_{i=1}^{N}\beta_i\lambda_i^k\mathbf{e}_i
+    \end{aligned}
+\end{equation}
+
+Dla dużych \(k\) wyraz zawierający \(\lambda_1^k\) będzie dominujący w sumie,
+a pozostałe współczynniki numerycznie pomijalnie małe --- prawa strona dla
+\(k\to\infty \) dąży do wektora proporcjonalnego do \(\mathbf{e}_1\), czyli do
+wektora własnego do największej wartości własnej.
+Iteracja:
+\begin{equation}
+    \begin{gathered}
+        \mathbf{A}\mathbf{y}_k = \mathbf{z}_k \\
+        \mathbf{y}_{k+1} = \frac{\mathbf{z}_k}{\|\mathbf{z}_k\|}
+    \end{gathered}
+\end{equation}
+zbiega do unormowanego wektora własnego macierzy \(\mathbf{A}\) do największej
+wartości własnej. Gdy iteracja zbiegnie do punktu stałego, wartość własna będzie
+dana \(\lambda_1=\|\mathbf{z}_k\| \).
+
+\pagebreak
+
+\section{Omówienie}
+
+Zadane są macierze \(\mathbf{M}\) i \(\mathbf{B}\):
 
 \[
+\mathbf{B} = 
 \begin{bmatrix}
     3 & 4 & 2 & 4 \\
     4 & 7 & 1 & -3 \\
     2 & 1 & 3 & 2 \\
     4 & -3 & 2 & 2
-\end{bmatrix}
-\]
-
-\[
+\end{bmatrix},
+\mathbf{M} = 
 \begin{bmatrix}
     3 & 6 & 6 & 9 \\
     1 & 4 & 0 & 9 \\
@@ -106,12 +148,93 @@ macierzy \(\mathbf{A}\) są dodatnie i uporządkowane malejąco
 \end{bmatrix}
 \]
 
-\section{Omówienie}
+W zadaniu należy:
+\begin{enumerate}[label=\alph*)]
+    \item algorytmem QR znaleźć wszystkie wartości własne macierzy M
+    \item metodą potęgową znaleźć największą co do modułu wartość własną 
+    macierzy B
+\end{enumerate}
 
 \subsection{Kod}
 
+W programie skorzystałem z bibliotek NumPy i SciPy.
+
+\subsubsection{Algorytm QR}
+
+\begin{lstlisting}[caption={Algorytm QR}]
+def algorytmQR(A):
+    A_old = A.copy()
+    Q, R = linalg.qr(A)
+    A = np.dot(R, Q)
+    i = 0
+    while not wektoryZbiezne(np.diag(A), np.diag(A_old)):
+        i += 1
+        A_old = A
+        Q, R = linalg.qr(A)
+        A = np.dot(R, Q)
+    return np.diag(A), i
+\end{lstlisting}
+
+Funkcja opiera się o iterację pętlą \texttt{do..while}. Tworzona jest kopia
+macierzy A, następnie dokonywana faktoryzacja QR z wykorzystaniem pakietu
+algebry liniowej. Czynniki faktoryzacji mnożone są w odwróconej kolejności.
+Następnie powtarzane jest to tak długo, aż diagonala nowo wyznaczjonej macierzy
+nie będzie wystarczająco zbliżona do diagonali macierzy z poprzedniego kroku.
+Funkcja zwraca diagonalę \texttt{np.diag(A)} (listę wartości własnych) oraz ilość
+iteracji \texttt{i}
+
+\pagebreak
+
+\subsubsection{Metoda potęgowa}
+
+\begin{lstlisting}[caption={Metoda potęgowa}]
+def metodaPotegowa(A):
+    y = np.ones(A.shape[1])
+    y_old = y.copy()
+
+    z = np.dot(A, y)
+    y = z / np.linalg.norm(z)
+    i = 0
+    while not wektoryZbiezne(y, y_old):
+        i += 1
+        y_old = y
+        z = np.dot(A, y)
+        y = z / np.linalg.norm(z)
+    return y, np.linalg.norm(z), i
+\end{lstlisting}
+
+W tej funkcji tworzony jest wektor \(\mathbf{y}\) złożony z samych jedynek
+oraz jego kopia. Obliczany jest wektor \(\mathbf{z} = \mathbf{A}\mathbf{y}\),
+następnie \(\mathbf{y}=\frac{\mathbf{z}}{\|\mathbf{z}\|}\). Procedura powtarzana
+jest tak długo, aż wektor \(\mathbf{y}\) nie będzie zbliżony do wektora
+z poprzedniej iteracji. Zwracane są wektor własny do największej wartości 
+własnej \texttt{y}, największa wartość własna \texttt{np.linalg.norm(z)} oraz
+ilość iteracji~\texttt{i}.
 
 \subsection{Wyniki}
 
+Otrzymane wyniki zgadzają się z tymi otrzymanymi przy użyciu pakietu algebry
+liniowej.
+
+Wartości własne otrzymane algorytmem QR po 108 iteracjach 
+(równe tym obliczonymi przez SciPy):
+\[
+\begin{bmatrix}
+    7.23099231 \\ 5.90015727 \\ 4.81580659 \\ 1.05304383
+\end{bmatrix}
+\]
+
+Największa wartość własna macierzy B, otrzymana po 76 iteracjach, niżej wynik
+otrzymany z SciPy:
+\[10.015982848255216\]
+\[10.015982848255222\]
+
+Oraz wektor własny do powyższej wartości własnej:
+
+\[
+\begin{bmatrix}
+    0.5582969 \\ 0.77620837 \\ 0.28678781 \\ 0.0596481
+\end{bmatrix}
+\]
 
 \end{document}
